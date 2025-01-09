@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shattered Chaos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="topbar">
+        <div class="logo-container">
+            <img src="logo.png" alt="Shattered Chaos" class="logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#footer" class="contact-btn">Contact Us</a></li>
+        </ul>
+    </nav>
+
+    <div class="hero" id="home" style="padding-top: calc(var(--nav-height) + var(--nav-padding) * 2)">
+        <div class="hero-content">
+            <img src="logo.png" alt="Shattered Chaos" class="hero-logo">
+        </div>
+        <div class="floating-particles"></div>
+    </div>
+
+    <div class="projects" id="projects">
+        <h2 class="section-title">Our Projects</h2>
+        <div class="projects-grid">
+            <div class="project-card reveal-card">
+                <div class="project-header">
+                    <div class="project-image">
+                        <img src="https://images.gamebanana.com/img/ss/tools/673e09318f566.jpg" alt="Fightplanner">
+                    </div>
+                    <div class="creator-badge">
+                        <img src="https://images.gamebanana.com/img/av/67431d061ea25.png" alt="FIREXDF" class="creator-avatar">
+                        <span>FIREXDF</span>
+                    </div>
+                </div>
+                <div class="project-info">
+                    <h3>Fightplanner</h3>
+                    <p>A SSBU Mod manager</p>
+                    <div class="project-tags">
+                        <span>Electron</span>
+                        <span>JavaScript</span>
+                        <span>Desktop App</span>
+                    </div>
+                    <a href="https://gamebanana.com/tools/17950" target="_blank class="project-link">View Project</a>
+                </div>
+            </div>
+
+            <div class="project-card reveal-card">
+                <div class="project-header">
+                    <div class="project-image">
+                        <img src="https://images.gamebanana.com/img/ss/wips/65e1584dad9fd.jpg" alt="Tomodachi Life HD">
+                    </div>
+                    <div class="creator-badge">
+                        <div class="creator-stack">
+                            <img src="https://images.gamebanana.com/img/av/67431d061ea25.png" alt="FIREXDF" class="creator-avatar">
+                            <img src="https://images.gamebanana.com/img/av/65dbe707a6370.gif" alt="Floweygaming" class="creator-avatar stack-avatar">
+                        </div>
+                        <span>FIREXDF & Floweygaming</span>
+                    </div>
+                </div>
+                <div class="project-info">
+                    <h3>Tomodachi Life HD</h3>
+                    <p>HD Texture Pack for Tomodachi Life</p>
+                    <div class="project-tags">
+                        <span>3DS</span>
+                        <span>Emulator Only</span>
+                        <span>Texture Pack</span>
+                    </div>
+                    <a href="https://gamebanana.com/wips/83028" target="_blank class="project-link" >View Project</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer" id="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="logo.png" alt="Shattered Chaos" class="footer-logo-img">
+            </div>
+            <div class="footer-links">
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <a href="https://gamebanana.com/studios/37746" target="_blank">GameBanana Studios</a>
+                    <a href="https://bsky.app/profile/shtrdchs-team.bsky.social" target="_blank">Bluesky</a>
+                    <a href="https://github.com/Shattered-Chaos" target="_blank">GitHub</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <a href="mailto:shatteredchaosstudios@gmail.com">Email Us</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Shattered Chaos. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>
