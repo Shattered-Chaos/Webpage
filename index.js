@@ -34,6 +34,14 @@ function updateParallax() {
 document.addEventListener('DOMContentLoaded', () => {
     createParticles();
 
+    // Check if device is mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (!isMobile) {
+        // Only initialize cursor on non-mobile devices
+        initCursor();
+    }
+
     // Create observers for different elements
     const observerOptions = {
         threshold: 0.2,
@@ -100,8 +108,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.reveal-card').forEach(card => {
         observer.observe(card);
     });
+});
 
-    // Cursor movement with much faster smoothing
+// Separate cursor initialization into its own function
+function initCursor() {
     const cursor = document.querySelector('.cursor-dot');
     let currentX = 0;
     let currentY = 0;
@@ -133,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Hide cursor when leaving window
     document.addEventListener('mouseleave', () => cursor.style.opacity = '0');
     document.addEventListener('mouseenter', () => cursor.style.opacity = '1');
-});
+}
 
 // Add floating animation
 const keyframes = `
