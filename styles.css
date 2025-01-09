@@ -19,6 +19,7 @@ body {
     color: white;
     font-family: 'Dela Gothic One', system-ui; /* Updated font */
     position: relative;
+    cursor: default; /* Reset to default cursor */
 }
 
 body::before {
@@ -422,4 +423,103 @@ body::after {
 
 .project-card:hover .project-info {
     transform: translateY(-5px);
+}
+
+.creator-credit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.creator-credit:hover {
+    opacity: 1;
+}
+
+.creator-credit-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+}
+
+.creator-credit p {
+    font-family: Arial, sans-serif;
+    font-size: 0.9rem;
+}
+
+.creator-credit a {
+    color: var(--secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.creator-credit a:hover {
+    color: var(--primary);
+    text-decoration: underline;
+}
+
+/* ...existing code... */
+
+.motto {
+    margin-top: 2rem;
+    font-size: 1.5rem;
+    opacity: 0;
+    transform: translateY(20px);
+    letter-spacing: 2px;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(157, 78, 221, 0.2);
+}
+
+.motto.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.8s ease;
+    transition-delay: 1s;
+}
+
+/* ...existing code... */
+
+.cursor-dot {
+    width: 30px;
+    height: 30px;
+    border: 2px solid var(--secondary);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: all 0.1s cubic-bezier(0.23, 1, 0.32, 1);
+    transform: translate(-50%, -50%);
+}
+
+.cursor-dot.link-hover {
+    width: 25px;
+    height: 25px;
+    background: var(--secondary);
+    border: none;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    transform: translate(-50%, -50%) rotate(180deg);
+    mix-blend-mode: difference;
+    animation: cursorSpin 0.3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+@keyframes cursorSpin {
+    0% {
+        transform: translate(-50%, -50%) rotate(180deg) scale(0.8);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg) scale(1);
+    }
+}
+
+/* Remove the cursor: none from interactive elements */
+a, button, .project-card, [role="button"] {
+    cursor: pointer;
 }

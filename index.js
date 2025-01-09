@@ -56,6 +56,12 @@ document.addEventListener('DOMContentLoaded', () => {
         heroObserver.observe(heroLogo);
     }
 
+    // Add motto to hero observer
+    const motto = document.querySelector('.motto');
+    if (motto) {
+        heroObserver.observe(motto);
+    }
+
     // Project cards observer
     const contentObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -94,6 +100,39 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.reveal-card').forEach(card => {
         observer.observe(card);
     });
+
+    // Cursor movement with much faster smoothing
+    const cursor = document.querySelector('.cursor-dot');
+    let currentX = 0;
+    let currentY = 0;
+    let targetX = 0;
+    let targetY = 0;
+
+    function updateCursor() {
+        currentX += (targetX - currentX) * 0.7; // Increased from 0.4
+        currentY += (targetY - currentY) * 0.7; // Increased from 0.4
+        cursor.style.left = `${currentX}px`;
+        cursor.style.top = `${currentY}px`;
+        requestAnimationFrame(updateCursor);
+    }
+
+    document.addEventListener('mousemove', (e) => {
+        targetX = e.clientX;
+        targetY = e.clientY;
+    });
+
+    updateCursor();
+
+    // Cursor hover effect
+    const links = document.querySelectorAll('a, button, .project-card, [role="button"]');
+    links.forEach(link => {
+        link.addEventListener('mouseenter', () => cursor.classList.add('link-hover'));
+        link.addEventListener('mouseleave', () => cursor.classList.remove('link-hover'));
+    });
+    
+    // Hide cursor when leaving window
+    document.addEventListener('mouseleave', () => cursor.style.opacity = '0');
+    document.addEventListener('mouseenter', () => cursor.style.opacity = '1');
 });
 
 // Add floating animation
