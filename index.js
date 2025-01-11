@@ -1,3 +1,22 @@
+// Add at the start of the file
+function hideLoader() {
+    const loader = document.querySelector('.loader-wrapper');
+    const tl = gsap.timeline();
+    
+    tl.to(loader, {
+        opacity: 0,
+        duration: 0.8,
+        onComplete: () => {
+            loader.remove();
+            // Start main animations immediately after loader is gone
+            initMainAnimations();
+        }
+    });
+}
+
+// Import GSAP and plugins at the top of your JS file
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
 function createParticles() {
     const container = document.querySelector('.floating-particles');
     const particleCount = 50;
@@ -20,130 +39,412 @@ function createParticles() {
     }
 }
 
-// Add parallax effect
-function updateParallax() {
-    const scrolled = window.pageYOffset;
-    document.body.style.setProperty(
-        '--scroll',
-        `${scrolled * 0.15}px`
-    );
-    document.body.style.backgroundPositionY = `${scrolled * 0.5}px`;
+// Initial page load animation sequence
+function initMainAnimations() {
+    // First reset all elements
+    gsap.set(['.topbar', '.hero-logo', '.motto', '.nav-links', '.logo-container'], {
+        opacity: 0,
+        y: 0,
+        visibility: 'visible'
+    });
+
+    // Create main timeline
+    const tl = gsap.timeline({
+        defaults: { ease: 'power3.out' }
+    });
+
+    tl.to('.topbar', {
+        opacity: 1,
+        duration: 0.6
+    })
+    .from('.topbar', {
+        y: -50,
+        duration: 0.6
+    }, '<')
+    .to('.logo-container', {
+        opacity: 1,
+        duration: 0.4
+    }, '-=0.3')
+    .to('.nav-links', {
+        opacity: 1,
+        duration: 0.4
+    }, '-=0.2')
+    .to('.hero-logo', {
+        opacity: 1,
+        scale: 1,
+        duration: 1,
+        ease: 'back.out(1.7)'
+    })
+    .to('.motto', {
+        opacity: 1,
+        y: 0,
+        duration: 0.8
+    }, '-=0.5');
 }
 
-// Initialize animations when page loads
-document.addEventListener('DOMContentLoaded', () => {
-    createParticles();
+// Project cards animation
+function initProjectAnimations() {
+    gsap.set('.project-card', {
+        opacity: 0,
+        y: 30 // Reduced from 50
+    });
 
-    // Check if device is mobile
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    gsap.utils.toArray('.project-card').forEach((card, i) => {
+        ScrollTrigger.create({
+            trigger: card,
+            start: 'top bottom-=100',
+            onEnter: () => {
+                gsap.to(card, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.5, // Reduced from 0.8
+                    delay: i * 0.1, // Reduced from 0.2
+                    ease: 'back.out(1.2)',
+                    onComplete: () => {
+                        const badge = card.querySelector('.creator-badge');
+                        if (badge) {
+                            gsap.to(badge, {
+                                opacity: 1,
+                                y: 0,
+                                duration: 0.3, // Reduced from 0.4
+                                ease: 'back.out(1.7)'
+                            });
+                        }
+                    }
+                });
+            },
+            once: true
+        });
+    });
+}
+
+// Team member animations
+function initTeamAnimations() {
+    const teamMembers = gsap.utils.toArray('.team-member');
     
-    if (!isMobile) {
-        // Only initialize cursor on non-mobile devices
-        initCursor();
-    }
-
-    // Create observers for different elements
-    const observerOptions = {
-        threshold: 0.2,
-        rootMargin: '0px'
-    };
-
-    // Hero logo observer
-    const heroObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                heroObserver.unobserve(entry.target); // Only animate once
-            }
+    teamMembers.forEach((member, i) => {
+        gsap.from(member, {
+            scrollTrigger: {
+                trigger: member,
+                start: 'top bottom-=50'
+            },
+            y: 30, // Reduced from 50
+            opacity: 0,
+            duration: 0.4, // Reduced from 0.6
+            delay: i * 0.05, // Reduced from 0.1
+            ease: 'back.out(1.7)'
         });
-    }, observerOptions);
-
-    // Observe hero logo
-    const heroLogo = document.querySelector('.hero-logo');
-    if (heroLogo) {
-        heroObserver.observe(heroLogo);
-    }
-
-    // Add motto to hero observer
-    const motto = document.querySelector('.motto');
-    if (motto) {
-        heroObserver.observe(motto);
-    }
-
-    // Project cards observer
-    const contentObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
-                contentObserver.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
-
-    // Observe only project cards
-    document.querySelectorAll('.reveal-card').forEach(card => {
-        contentObserver.observe(card);
     });
 
-    // Add smooth scroll behavior
-    document.documentElement.style.scrollBehavior = 'smooth';
+    // Enhanced team member click interaction
+    teamMembers.forEach(member => {
+        member.addEventListener('click', () => {
+            const info = createTeamInfo(member);
+            
+            const tl = gsap.timeline();
+            
+            tl.to(teamMembers, {
+                opacity: 0.3,
+                scale: 0.95,
+                duration: 0.3,
+                ease: 'power2.inOut',
+                filter: 'blur(2px)'
+            })
+            .to(member, {
+                opacity: 1,
+                scale: 1.1,
+                filter: 'blur(0px)',
+                duration: 0.3,
+                ease: 'power2.inOut'
+            }, '<')
+            .to(info, {
+                opacity: 1,
+                scale: 1,
+                duration: 0.4,
+                ease: 'back.out(1.7)'
+            });
+        });
+    });
+}
+
+// Enhanced cursor animation
+function initCursor() {
+    if (window.matchMedia('(pointer: fine)').matches) {
+        const cursor = document.querySelector('.cursor-dot');
+        const pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+        const mouse = { x: pos.x, y: pos.y };
+        const speed = 0.1;
+
+        const updateCursor = () => {
+            pos.x += (mouse.x - pos.x) * speed;
+            pos.y += (mouse.y - pos.y) * speed;
+            
+            gsap.set(cursor, {
+                x: pos.x,
+                y: pos.y
+            });
+
+            requestAnimationFrame(updateCursor);
+        };
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        updateCursor();
+
+        // Cursor hover effects
+        const hoverElements = document.querySelectorAll('a, button, .project-card, .team-member');
+        
+        hoverElements.forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                gsap.to(cursor, {
+                    scale: 1.5,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            });
+
+            element.addEventListener('mouseleave', () => {
+                gsap.to(cursor, {
+                    scale: 1,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            });
+        });
+    }
+}
+
+// Parallax effects
+function initParallax() {
+    gsap.to('.hero-content', {
+        scrollTrigger: {
+            trigger: '.hero',
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true
+        },
+        y: (i, target) => -ScrollTrigger.maxScroll(window) * target.dataset.speed,
+        ease: 'none'
+    });
+}
+
+// Smooth scroll
+function initSmoothScroll() {
+    const links = document.querySelectorAll('a[href^="#"]');
     
-    // Initialize parallax
-    window.addEventListener('scroll', () => {
-        requestAnimationFrame(updateParallax);
-    });
-
-    // Add intersection observer for project cards
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
+    links.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = document.querySelector(link.getAttribute('href'));
+            if (target) {
+                gsap.to(window, {
+                    duration: 1,
+                    scrollTo: target,
+                    ease: 'power3.inOut'
+                });
             }
         });
-    }, {
-        threshold: 0.1
     });
+}
 
-    // Observe all reveal cards
-    document.querySelectorAll('.reveal-card').forEach(card => {
-        observer.observe(card);
-    });
+// Initialize everything
+window.addEventListener('load', () => {
+    // Wait for everything to load
+    setTimeout(() => {
+        hideLoader();
+    }, 1500); // Minimum loading time of 1.5 seconds
 });
 
-// Separate cursor initialization into its own function
-function initCursor() {
-    const cursor = document.querySelector('.cursor-dot');
-    let currentX = 0;
-    let currentY = 0;
-    let targetX = 0;
-    let targetY = 0;
+// Update document ready event
+document.addEventListener('DOMContentLoaded', () => {
+    createParticles();
+    // Don't initialize animations yet
+    initProjectAnimations();
+    initTeamAnimations();
+    initCursor();
+    initParallax();
+    initSmoothScroll();
+    
+    // Refresh ScrollTrigger on page load
+    setTimeout(() => {
+        ScrollTrigger.refresh();
+    }, 100);
+});
 
-    function updateCursor() {
-        currentX += (targetX - currentX) * 0.7; // Increased from 0.4
-        currentY += (targetY - currentY) * 0.7; // Increased from 0.4
-        cursor.style.left = `${currentX}px`;
-        cursor.style.top = `${currentY}px`;
-        requestAnimationFrame(updateCursor);
+// Helper function to create team info modal
+function createTeamInfo(member) {
+    // Remove existing modals first
+    document.querySelectorAll('.team-info-container, .team-info-backdrop').forEach(el => el.remove());
+
+    const teamInfoBackdrop = document.createElement('div');
+    teamInfoBackdrop.classList.add('team-info-backdrop');
+    document.body.appendChild(teamInfoBackdrop);
+
+    const teamInfoContainer = document.createElement('div');
+    teamInfoContainer.classList.add('team-info-container');
+    document.body.appendChild(teamInfoContainer);
+
+    // Get the avatar src from the clicked member
+    const avatarSrc = member.querySelector('.team-avatar').src;
+
+    // Parse social media links
+    let socialsHtml = '';
+    try {
+        const socials = JSON.parse(member.getAttribute('data-socials') || '{}');
+        if (Object.keys(socials).length > 0) {
+            socialsHtml = `
+                <div class="team-info-socials">
+                    ${socials.instagram ? `
+                        <a href="${socials.instagram}" target="_blank" class="social-link">
+                            <img src="images/social/instagram.webp" alt="Instagram">
+                            Instagram
+                        </a>
+                    ` : ''}
+                    ${socials.bluesky ? `
+                        <a href="${socials.bluesky}" target="_blank" class="social-link">
+                            <img src="images/social/bluesky.png" alt="Bluesky">
+                            Bluesky
+                        </a>
+                    ` : ''}
+                    ${socials.github ? `
+                        <a href="${socials.github}" target="_blank" class="social-link">
+                            <img src="images/social/github.png" alt="GitHub">
+                            GitHub
+                        </a>
+                    ` : ''}
+                    ${socials.youtube ? `
+                        <a href="${socials.youtube}" target="_blank" class="social-link">
+                            <img src="images/social/youtube.webp" alt="YouTube">
+                            YouTube
+                        </a>
+                    ` : ''}
+                    ${socials.gamebanana ? `
+                        <a href="${socials.gamebanana}" target="_blank" class="social-link">
+                            <img src="images/social/gamebanana.png" alt="GameBanana">
+                            GameBanana
+                        </a>
+                    ` : ''}
+                </div>
+            `;
+        }
+    } catch (e) {
+        console.error('Error parsing social links:', e);
     }
 
-    document.addEventListener('mousemove', (e) => {
-        targetX = e.clientX;
-        targetY = e.clientY;
+    teamInfoContainer.innerHTML = `
+        <div class="team-info">
+            <img src="${avatarSrc}" alt="${member.getAttribute('data-name')}" class="team-info-avatar">
+            <h3>${member.getAttribute('data-name')}</h3>
+            <p><strong>${member.getAttribute('data-role')}</strong></p>
+            ${socialsHtml}
+            <p>${member.getAttribute('data-description')}</p>
+            <button class="close-btn" onclick="closeTeamInfo(this)">Close</button>
+        </div>
+    `;
+
+    // Show the modal with faster avatar animation
+    gsap.set(teamInfoContainer, { opacity: 0, scale: 0.9 });
+    gsap.set(teamInfoBackdrop, { opacity: 0 });
+    gsap.set('.team-info-avatar', { 
+        scale: 0.5,
+        opacity: 0,
+        y: 20  // Reduced from 30
     });
 
-    updateCursor();
-
-    // Cursor hover effect
-    const links = document.querySelectorAll('a, button, .project-card, [role="button"]');
-    links.forEach(link => {
-        link.addEventListener('mouseenter', () => cursor.classList.add('link-hover'));
-        link.addEventListener('mouseleave', () => cursor.classList.remove('link-hover'));
-    });
+    const tl = gsap.timeline();
     
-    // Hide cursor when leaving window
-    document.addEventListener('mouseleave', () => cursor.style.opacity = '0');
-    document.addEventListener('mouseenter', () => cursor.style.opacity = '1');
+    tl.to(teamInfoBackdrop, {
+        opacity: 1,
+        duration: 0.2  // Reduced from 0.3
+    })
+    .to(teamInfoContainer, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.2,  // Reduced from 0.3
+        ease: 'back.out(1.5)'  // Reduced from 1.7 for snappier animation
+    }, '-=0.1')
+    .to('.team-info-avatar', {
+        scale: 1,
+        opacity: 1,
+        y: 0,
+        duration: 0.2,  // Reduced from 0.4
+        ease: 'back.out(1.5)'  // Reduced from 1.7
+    }, '-=0.1');
+
+    // Faster social links animation
+    const socialLinks = teamInfoContainer.querySelectorAll('.social-link');
+    gsap.set(socialLinks, { 
+        opacity: 0, 
+        x: -10,  // Reduced from -20
+        scale: 0.9  // Increased from 0.8 for less dramatic scale
+    });
+
+    socialLinks.forEach((link, index) => {
+        gsap.to(link, {
+            opacity: 1,
+            x: 0,
+            scale: 1,
+            duration: 0.2,  // Reduced from 0.3
+            delay: 0.1 + (index * 0.05),  // Reduced delays
+            ease: 'back.out(1.5)'  // Reduced from 1.7
+        });
+
+        // Faster hover animations
+        link.addEventListener('mouseenter', () => {
+            gsap.to(link, {
+                scale: 1.05,  // Reduced from 1.1
+                y: -3,  // Reduced from -5
+                duration: 0.15,  // Reduced from 0.2
+                ease: 'power2.out'
+            });
+        });
+
+        link.addEventListener('mouseleave', () => {
+            gsap.to(link, {
+                scale: 1,
+                y: 0,
+                duration: 0.15,  // Reduced from 0.2
+                ease: 'power2.out'
+            });
+        });
+    });
+
+    // Make modal visible
+    requestAnimationFrame(() => {
+        teamInfoBackdrop.classList.add('visible');
+        teamInfoContainer.classList.add('visible');
+    });
+
+    return teamInfoContainer;
 }
+
+// Add this new function
+function closeTeamInfo(btn) {
+    const container = btn.closest('.team-info-container');
+    const backdrop = document.querySelector('.team-info-backdrop');
+    
+    gsap.to([container, backdrop], {
+        opacity: 0,
+        duration: 0.15,  // Reduced from 0.2
+        ease: 'power2.inOut',
+        onComplete: () => {
+            container.remove();
+            backdrop.remove();
+            gsap.to('.team-member', {
+                opacity: 1,
+                scale: 1,
+                filter: 'blur(0px)',
+                duration: 0.2  // Reduced from 0.3
+            });
+        }
+    });
+}
+
+// Add this to window scope
+window.closeTeamInfo = closeTeamInfo;
 
 // Add floating animation
 const keyframes = `
