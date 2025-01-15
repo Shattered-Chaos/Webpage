@@ -78,7 +78,7 @@ body::after {
     will-change: transform, opacity;
 }
 
-/* ...existing code... */
+
 
 .logo-container {
     position: static; /* Changed from absolute */
@@ -95,7 +95,7 @@ body::after {
     visibility: hidden;
 }
 
-/* ...existing code... */
+
 
 .logo {
     height: 100%;
@@ -530,7 +530,7 @@ body::after {
     text-decoration: underline;
 }
 
-/* ...existing code... */
+
 
 .motto {
     margin-top: 2rem;
@@ -553,7 +553,7 @@ body::after {
     transition-delay: 1s;
 }
 
-/* ...existing code... */
+
 
 .cursor-dot {
     width: 30px;
@@ -733,7 +733,7 @@ a, button, .project-card, [role="button"] {
     }
 }
 
-/* ...existing code... */
+
 
 .team {
     padding: 4rem 2rem;
@@ -911,7 +911,7 @@ a, button, .project-card, [role="button"] {
     box-shadow: 0 4px 20px rgba(157, 78, 221, 0.3);
 }
 
-/* ...existing code... */
+
 
 .team-info-socials {
     display: grid;
@@ -939,7 +939,7 @@ a, button, .project-card, [role="button"] {
     will-change: transform;
 }
 
-/* ...existing code... */
+
 
 .team-info-socials img {
     width: 18px; /* Slightly smaller icons */
@@ -947,4 +947,4 @@ a, button, .project-card, [role="button"] {
     opacity: 0.8;
 }
 
-/* ...existing code... */
+
