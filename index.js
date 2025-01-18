@@ -86,7 +86,7 @@ function initMainAnimations() {
 function initProjectAnimations() {
     gsap.set('.project-card', {
         opacity: 0,
-        y: 30 // Reduced from 50
+        y: 30 
     });
 
     gsap.utils.toArray('.project-card').forEach((card, i) => {
@@ -97,8 +97,7 @@ function initProjectAnimations() {
                 gsap.to(card, {
                     opacity: 1,
                     y: 0,
-                    duration: 0.5, // Reduced from 0.8
-                    delay: i * 0.1, // Reduced from 0.2
+                    duration: 0.5,
                     ease: 'back.out(1.2)',
                     onComplete: () => {
                         const badge = card.querySelector('.creator-badge');
@@ -106,7 +105,7 @@ function initProjectAnimations() {
                             gsap.to(badge, {
                                 opacity: 1,
                                 y: 0,
-                                duration: 0.3, // Reduced from 0.4
+                                duration: 0.3, 
                                 ease: 'back.out(1.7)'
                             });
                         }
@@ -128,10 +127,9 @@ function initTeamAnimations() {
                 trigger: member,
                 start: 'top bottom-=50'
             },
-            y: 30, // Reduced from 50
+            y: 30,
             opacity: 0,
-            duration: 0.4, // Reduced from 0.6
-            delay: i * 0.05, // Reduced from 0.1
+            duration: 0.4,
             ease: 'back.out(1.7)'
         });
     });
