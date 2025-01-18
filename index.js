@@ -7,7 +7,6 @@ function hideLoader() {
         duration: 0.8,
         onComplete: () => {
             loader.remove();
-            // Start main animations immediately after loader is gone
             initMainAnimations();
         }
     });
@@ -38,14 +37,12 @@ function createParticles() {
 }
 
 function initMainAnimations() {
-    // First reset all elements
     gsap.set(['.topbar', '.hero-logo', '.motto', '.nav-links', '.logo-container'], {
         opacity: 0,
         y: 0,
         visibility: 'visible'
     });
 
-    // Create main timeline
     const tl = gsap.timeline({
         defaults: { ease: 'power3.out' }
     });
@@ -79,7 +76,6 @@ function initMainAnimations() {
     }, '-=0.5');
 }
 
-// Project cards animation
 function initProjectAnimations() {
     gsap.set('.project-card', {
         opacity: 0,
@@ -89,14 +85,14 @@ function initProjectAnimations() {
     gsap.utils.toArray('.project-card').forEach((card, i) => {
         ScrollTrigger.create({
             trigger: card,
-            start: 'top bottom-=100',
+            start: 'top bottom-=1',
             onEnter: () => {
                 gsap.to(card, {
                     opacity: 1,
                     y: 0,
                     duration: 0.5,
                     delay: i * 0.1,
-                    ease: 'back.out(1.2)',
+                    ease: 'power4.in(2)',
                     onComplete: () => {
                         const badge = card.querySelector('.creator-badge');
                         if (badge) {
@@ -115,7 +111,6 @@ function initProjectAnimations() {
     });
 }
 
-// Team member animations
 function initTeamAnimations() {
     const teamMembers = gsap.utils.toArray('.team-member');
     
@@ -123,17 +118,15 @@ function initTeamAnimations() {
         gsap.from(member, {
             scrollTrigger: {
                 trigger: member,
-                start: 'top bottom-=50'
             },
-            y: 30, // Reduced from 50
+            y: 30,
             opacity: 0,
-            duration: 0.4, // Reduced from 0.6
-            delay: i * 0.05, // Reduced from 0.1
-            ease: 'back.out(1.7)'
+            duration: 0.3,
+            delay: i * 0.03,
+            ease: 'back.out(2.2)'
         });
     });
 
-    // Enhanced team member click interaction
     teamMembers.forEach(member => {
         member.addEventListener('click', () => {
             const info = createTeamInfo(member);
@@ -164,7 +157,6 @@ function initTeamAnimations() {
     });
 }
 
-// Enhanced cursor animation
 function initCursor() {
     if (window.matchMedia('(pointer: fine)').matches) {
         const cursor = document.querySelector('.cursor-dot');
@@ -191,7 +183,6 @@ function initCursor() {
 
         updateCursor();
 
-        // Cursor hover effects
         const hoverElements = document.querySelectorAll('a, button, .project-card, .team-member');
         
         hoverElements.forEach(element => {
@@ -214,7 +205,6 @@ function initCursor() {
     }
 }
 
-// Parallax effects
 function initParallax() {
     gsap.to('.hero-content', {
         scrollTrigger: {
@@ -228,7 +218,6 @@ function initParallax() {
     });
 }
 
-// Smooth scroll
 function initSmoothScroll() {
     const links = document.querySelectorAll('a[href^="#"]');
     
@@ -240,40 +229,33 @@ function initSmoothScroll() {
                 gsap.to(window, {
                     duration: 1,
                     scrollTo: target,
-                    ease: 'power3.inOut'
+                    ease: 'power4.inOut'
                 });
             }
         });
     });
 }
 
-// Initialize everything
 window.addEventListener('load', () => {
-    // Wait for everything to load
     setTimeout(() => {
         hideLoader();
-    }, 1500); // Minimum loading time of 1.5 seconds
+    }, 1500);
 });
 
-// Update document ready event
 document.addEventListener('DOMContentLoaded', () => {
     createParticles();
-    // Don't initialize animations yet
     initProjectAnimations();
     initTeamAnimations();
     initCursor();
     initParallax();
     initSmoothScroll();
     
-    // Refresh ScrollTrigger on page load
     setTimeout(() => {
         ScrollTrigger.refresh();
     }, 100);
 });
 
-// Helper function to create team info modal
 function createTeamInfo(member) {
-    // Remove existing modals first
     document.querySelectorAll('.team-info-container, .team-info-backdrop').forEach(el => el.remove());
 
     const teamInfoBackdrop = document.createElement('div');
@@ -284,10 +266,8 @@ function createTeamInfo(member) {
     teamInfoContainer.classList.add('team-info-container');
     document.body.appendChild(teamInfoContainer);
 
-    // Get the avatar src from the clicked member
     const avatarSrc = member.querySelector('.team-avatar').src;
 
-    // Parse social media links
     let socialsHtml = '';
     try {
         const socials = JSON.parse(member.getAttribute('data-socials') || '{}');
@@ -342,41 +322,39 @@ function createTeamInfo(member) {
         </div>
     `;
 
-    // Show the modal with faster avatar animation
     gsap.set(teamInfoContainer, { opacity: 0, scale: 0.9 });
     gsap.set(teamInfoBackdrop, { opacity: 0 });
     gsap.set('.team-info-avatar', { 
         scale: 0.5,
         opacity: 0,
-        y: 20  // Reduced from 30
+        y: 20
     });
 
     const tl = gsap.timeline();
     
     tl.to(teamInfoBackdrop, {
         opacity: 1,
-        duration: 0.2  // Reduced from 0.3
+        duration: 0.2
     })
     .to(teamInfoContainer, {
         opacity: 1,
         scale: 1,
-        duration: 0.2,  // Reduced from 0.3
-        ease: 'back.out(1.5)'  // Reduced from 1.7 for snappier animation
+        duration: 0.2,
+        ease: 'back.out(1.5)'  
     }, '-=0.1')
     .to('.team-info-avatar', {
         scale: 1,
         opacity: 1,
         y: 0,
-        duration: 0.2,  // Reduced from 0.4
-        ease: 'back.out(1.5)'  // Reduced from 1.7
+        duration: 0.2,
+        ease: 'back.out(1.5)'
     }, '-=0.1');
 
-    // Faster social links animation
     const socialLinks = teamInfoContainer.querySelectorAll('.social-link');
     gsap.set(socialLinks, { 
         opacity: 0, 
-        x: -10,  // Reduced from -20
-        scale: 0.9  // Increased from 0.8 for less dramatic scale
+        x: -10,  
+        scale: 0.9  
     });
 
     socialLinks.forEach((link, index) => {
@@ -384,17 +362,16 @@ function createTeamInfo(member) {
             opacity: 1,
             x: 0,
             scale: 1,
-            duration: 0.2,  // Reduced from 0.3
-            delay: 0.1 + (index * 0.05),  // Reduced delays
-            ease: 'back.out(1.5)'  // Reduced from 1.7
+            duration: 0.2,  
+            delay: 0.1 + (index * 0.05),  
+            ease: 'back.out(1.5)'  
         });
 
-        // Faster hover animations
         link.addEventListener('mouseenter', () => {
             gsap.to(link, {
-                scale: 1.05,  // Reduced from 1.1
-                y: -3,  // Reduced from -5
-                duration: 0.15,  // Reduced from 0.2
+                scale: 1.05,
+                y: -3,
+                duration: 0.15,
                 ease: 'power2.out'
             });
         });
@@ -403,13 +380,12 @@ function createTeamInfo(member) {
             gsap.to(link, {
                 scale: 1,
                 y: 0,
-                duration: 0.15,  // Reduced from 0.2
+                duration: 0.15,
                 ease: 'power2.out'
             });
         });
     });
 
-    // Make modal visible
     requestAnimationFrame(() => {
         teamInfoBackdrop.classList.add('visible');
         teamInfoContainer.classList.add('visible');
@@ -418,14 +394,13 @@ function createTeamInfo(member) {
     return teamInfoContainer;
 }
 
-// Add this new function
 function closeTeamInfo(btn) {
     const container = btn.closest('.team-info-container');
     const backdrop = document.querySelector('.team-info-backdrop');
     
     gsap.to([container, backdrop], {
         opacity: 0,
-        duration: 0.15,  // Reduced from 0.2
+        duration: 0.15,
         ease: 'power2.inOut',
         onComplete: () => {
             container.remove();
@@ -434,16 +409,14 @@ function closeTeamInfo(btn) {
                 opacity: 1,
                 scale: 1,
                 filter: 'blur(0px)',
-                duration: 0.2  // Reduced from 0.3
+                duration: 0.2
             });
         }
     });
 }
 
-// Add this to window scope
 window.closeTeamInfo = closeTeamInfo;
 
-// Add floating animation
 const keyframes = `
 @keyframes float {
     0% { transform: translateY(0) rotate(0deg); }
