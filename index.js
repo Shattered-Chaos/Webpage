@@ -1,4 +1,3 @@
-// Add at the start of the file
 function hideLoader() {
     const loader = document.querySelector('.loader-wrapper');
     const tl = gsap.timeline();
@@ -14,7 +13,6 @@ function hideLoader() {
     });
 }
 
-// Import GSAP and plugins at the top of your JS file
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 function createParticles() {
@@ -39,7 +37,6 @@ function createParticles() {
     }
 }
 
-// Initial page load animation sequence
 function initMainAnimations() {
     // First reset all elements
     gsap.set(['.topbar', '.hero-logo', '.motto', '.nav-links', '.logo-container'], {
@@ -86,7 +83,7 @@ function initMainAnimations() {
 function initProjectAnimations() {
     gsap.set('.project-card', {
         opacity: 0,
-        y: 30 
+        y: 30
     });
 
     gsap.utils.toArray('.project-card').forEach((card, i) => {
@@ -98,7 +95,7 @@ function initProjectAnimations() {
                     opacity: 1,
                     y: 0,
                     duration: 0.5,
-                    delay: i * 0.1, 
+                    delay: i * 0.1,
                     ease: 'back.out(1.2)',
                     onComplete: () => {
                         const badge = card.querySelector('.creator-badge');
@@ -106,7 +103,7 @@ function initProjectAnimations() {
                             gsap.to(badge, {
                                 opacity: 1,
                                 y: 0,
-                                duration: 0.3, 
+                                duration: 0.3,
                                 ease: 'back.out(1.7)'
                             });
                         }
@@ -128,10 +125,10 @@ function initTeamAnimations() {
                 trigger: member,
                 start: 'top bottom-=50'
             },
-            y: 30,
+            y: 30, // Reduced from 50
             opacity: 0,
-            duration: 0.4,
-            delay: i * 0.05
+            duration: 0.4, // Reduced from 0.6
+            delay: i * 0.05, // Reduced from 0.1
             ease: 'back.out(1.7)'
         });
     });
