@@ -98,6 +98,7 @@ function initProjectAnimations() {
                     opacity: 1,
                     y: 0,
                     duration: 0.5,
+                    delay: i * 0.1, 
                     ease: 'back.out(1.2)',
                     onComplete: () => {
                         const badge = card.querySelector('.creator-badge');
@@ -130,6 +131,7 @@ function initTeamAnimations() {
             y: 30,
             opacity: 0,
             duration: 0.4,
+            delay: i * 0.05
             ease: 'back.out(1.7)'
         });
     });
