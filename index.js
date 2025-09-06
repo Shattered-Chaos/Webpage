@@ -310,6 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initParallax();
     initSmoothScroll();
 
+    
     setTimeout(() => {
         ScrollTrigger.refresh();
     }, 100);
