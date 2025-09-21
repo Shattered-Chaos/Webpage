@@ -309,8 +309,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initCursor();
     initParallax();
     initSmoothScroll();
+    initMobileNav();
 
-    
     setTimeout(() => {
         ScrollTrigger.refresh();
     }, 100);
@@ -544,3 +544,41 @@ document.addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeWelcomeModal();
 });
+
+// Mobile nav
+function initMobileNav() {
+    const topbar = document.querySelector('.topbar');
+    const toggle = document.querySelector('.menu-toggle');
+    const links = document.getElementById('nav-links');
+    if (!topbar || !toggle || !links) return;
+
+    const setExpanded = (open) => {
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        toggle.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
+        topbar.classList.toggle('nav-open', open);
+        document.body.classList.toggle('no-scroll', open);
+    };
+
+    const isOpen = () => topbar.classList.contains('nav-open');
+
+    toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setExpanded(!isOpen());
+    });
+
+    // Close when clicking a nav link
+    links.querySelectorAll('a').forEach(a => {
+        a.addEventListener('click', () => setExpanded(false));
+    });
+
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+        if (!isOpen()) return;
+        if (!topbar.contains(e.target)) setExpanded(false);
+    });
+
+    // Close if resized to desktop
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768 && isOpen()) setExpanded(false);
+    });
+}

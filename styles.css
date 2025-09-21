@@ -15,6 +15,9 @@
     box-sizing: border-box;
 }
 
+/* Make images scale down on small screens */
+img { max-width: 100%; height: auto; }
+
 body {
     background: none;
     color: white;
@@ -22,6 +25,9 @@ body {
     position: relative;
     cursor: default; 
 }
+
+/* Prevent background scroll when mobile nav is open */
+body.no-scroll { overflow: hidden; }
 
 body::before {
     content: '';
@@ -127,6 +133,46 @@ body::after {
     opacity: 0;
     visibility: hidden;
 }
+
+/* Hamburger toggle (hidden on desktop) */
+.menu-toggle {
+    display: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    gap: 6px; /* espace entre les barres */
+}
+.menu-toggle .bar {
+    display: block;
+    width: 2px;          /* barre verticale */
+    height: 18px;
+    background: #fff;
+    border-radius: 2px;
+    transition: transform 0.25s ease, opacity 0.25s ease, width 0.25s ease, height 0.25s ease;
+}
+/* l'espacement est géré par gap, pas besoin de margin-top */
+
+/* Transform to X when open */
+/* En mode ouvert, on centre les barres et on forme un X */
+.topbar.nav-open .menu-toggle[aria-expanded="true"] .bar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 24px;  /* devient une barre horizontale */
+    height: 2px;
+    transform-origin: center;
+}
+.topbar.nav-open .menu-toggle[aria-expanded="true"] .bar:nth-child(1) { transform: translate(-50%, -50%) rotate(45deg); }
+.topbar.nav-open .menu-toggle[aria-expanded="true"] .bar:nth-child(2) { opacity: 0; }
+.topbar.nav-open .menu-toggle[aria-expanded="true"] .bar:nth-child(3) { transform: translate(-50%, -50%) rotate(-45deg); }
 
 .nav-links a {
     color: white;
@@ -573,7 +619,6 @@ body::after {
     font-size: 1.5rem;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(20px);
     letter-spacing: 2px;
     background: linear-gradient(45deg, var(--primary), var(--secondary));
     -webkit-background-clip: text;
@@ -662,15 +707,35 @@ body::after {
   }
 
 @media screen and (max-width: 768px) {
+    .menu-toggle { display: inline-flex; }
     .logo-container {
         height: calc(var(--nav-height) - 25px);
     }
 
+    /* Dropdown panel for nav links */
     .nav-links {
-        position: static;
-        width: auto;
-        justify-content: center;
-        gap: 0.5rem;
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        left: 0;
+        margin: 0 auto;
+        width: calc(100% - 2rem);
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid transparent; /* hide border when closed */
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        padding: 0.5rem;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0 !important; /* override GSAP inline */
+        visibility: hidden !important;
+        transform: translateY(-8px);
+        transition: max-height 0.3s ease, opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+        z-index: 999;
     }
 
     .topbar {
@@ -680,16 +745,18 @@ body::after {
         width: 95%;
     }
 
-    .nav-links {
-        display: flex;
-        position: static;
-        right: 1rem;
-        gap: 0.5rem;
+    /* Show dropdown when toggled */
+    .topbar.nav-open .nav-links {
+        max-height: 320px;
+        opacity: 1 !important;
+        visibility: visible !important;
+        border-color: rgba(255,255,255,0.1);
+        transform: translateY(0);
     }
 
     .nav-links a {
         font-size: 0.7rem;
-        padding: 0.3rem 0.8rem;
+        padding: 0.6rem 0.8rem;
     }
 
     .contact-btn {
