@@ -961,8 +961,8 @@ body::after {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 80%;
-    max-width: 600px;
+    width: min(92vw, 600px);
+    max-height: 85vh;               /* limite haute */
     padding: 3rem 2rem 2rem;
     z-index: 9998;
     display: flex;
@@ -974,7 +974,29 @@ body::after {
     border-radius: 10px;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
     pointer-events: auto !important;
+    overflow: hidden;               /* le contenu reste dans la carte */
 }
+
+/* Close icon in top-right corner */
+.team-info-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(0,0,0,0.35);
+    color: #fff;
+    font-size: 22px;
+    line-height: 34px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+    z-index: 10004;
+}
+.team-info-close:hover { transform: scale(1.06); background: rgba(0,0,0,0.55); border-color: rgba(255,255,255,0.25); }
+.team-info-close:active { transform: scale(0.98); }
 
 .team-info-container.visible {
     display: flex;
@@ -990,7 +1012,17 @@ body::after {
     text-align: center;
     pointer-events: auto !important;
     position: relative;
-    padding-top: 60px;
+    padding-top: 140px;             /* laisse de la place à l'avatar (120px + marges) */
+    padding-bottom: 1rem;           /* normal flow */
+    max-height: calc(85vh - 5rem);  /* laisse la place aux paddings/av. */
+    overflow-y: auto;               /* la zone de contenu scrolle dans la carte */
+    -webkit-overflow-scrolling: touch;
+}
+
+.team-info-body {
+    max-height: calc(85vh - 6rem);
+    overflow-y: auto;                /* zone scrollable réelle */
+    padding: 0 0.5rem 0.5rem;
 }
 
 .team-info h3 {
@@ -1013,7 +1045,7 @@ body::after {
     margin-top: 1rem;
     cursor: pointer !important;
     pointer-events: auto !important;
-    position: relative;
+    position: static;               /* retour au flux normal */
     z-index: 10003;
 }
 
@@ -1033,7 +1065,7 @@ body::after {
     border-radius: 50%;
     border: 3px solid var(--primary);
     position: absolute;
-    top: -90px;
+    top: 16px;                      /* avatar entièrement dans la carte */
     left: 50%;
     transform: translateX(-50%);
     box-shadow: 0 4px 20px rgba(157, 78, 221, 0.3);
@@ -1235,4 +1267,10 @@ body::after {
         opacity: 0;
         transform: translateY(-60px) scale(1) rotate(360deg);
     }
+}
+
+/* Éviter que de longues chaînes débordent horizontalement */
+.team-info, .team-info-body {
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }

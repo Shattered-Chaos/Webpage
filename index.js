@@ -373,13 +373,16 @@ function createTeamInfo(member) {
     }
 
     teamInfoContainer.innerHTML = `
+        <button class="team-info-close" aria-label="Fermer" title="Fermer">×</button>
+        <img src="${avatarSrc}" alt="${member.getAttribute('data-name')}" class="team-info-avatar">
         <div class="team-info">
-            <img src="${avatarSrc}" alt="${member.getAttribute('data-name')}" class="team-info-avatar">
-            <h3>${member.getAttribute('data-name')}</h3>
-            <p><strong>${member.getAttribute('data-role')}</strong></p>
-            ${socialsHtml}
-            <p>${member.getAttribute('data-description')}</p>
-            <button class="close-btn" onclick="closeTeamInfo(this)">Close</button>
+            <div class="team-info-body">
+                <h3>${member.getAttribute('data-name')}</h3>
+                <p><strong>${member.getAttribute('data-role')}</strong></p>
+                ${socialsHtml}
+                <p>${member.getAttribute('data-description')}</p>
+                <button class="close-btn" onclick="closeTeamInfo(this)">Close</button>
+            </div>
         </div>
     `;
 
@@ -452,11 +455,20 @@ function createTeamInfo(member) {
         teamInfoContainer.classList.add('visible');
     });
 
+    // Close on backdrop click
+    teamInfoBackdrop.addEventListener('click', () => closeTeamInfo());
+    // Top-right close
+    const cornerClose = teamInfoContainer.querySelector('.team-info-close');
+    if (cornerClose) cornerClose.addEventListener('click', () => closeTeamInfo());
+    // Close on Escape (once)
+    const escHandler = (e) => { if (e.key === 'Escape') closeTeamInfo(); };
+    document.addEventListener('keydown', escHandler, { once: true });
+
     return teamInfoContainer;
 }
 
 function closeTeamInfo(btn) {
-    const container = btn.closest('.team-info-container');
+    const container = (btn && btn.closest) ? btn.closest('.team-info-container') : document.querySelector('.team-info-container');
     const backdrop = document.querySelector('.team-info-backdrop');
     
     gsap.to([container, backdrop], {
