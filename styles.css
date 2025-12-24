@@ -773,6 +773,16 @@ body::after {
         padding: 0 var(--mobile-padding);
     }
 
+    .who-are-we {
+        padding: 2rem var(--mobile-padding);
+    }
+
+    .who-are-we-bio {
+        font-size: 1rem;
+        line-height: 1.6;
+        padding: 0;
+    }
+
     .projects {
         padding: 2rem var(--mobile-padding);
     }
@@ -866,9 +876,37 @@ body::after {
         font-size: 0.7rem;
         padding: 0.3rem 0.5rem;
     }
+
+    .who-are-we-bio {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
 }
 
 
+
+.who-are-we {
+    padding: 4rem 2rem;
+    background: rgba(157, 78, 221, 0.05);
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+.who-are-we-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.who-are-we-bio {
+    font-size: 1.3rem;
+    line-height: 1.8;
+    color: white;
+    opacity: 0.9;
+    font-family: 'Dela Gothic One', system-ui;
+    letter-spacing: 0.5px;
+    padding: 0 1rem;
+}
 
 .team {
     padding: 4rem 2rem;
@@ -879,9 +917,9 @@ body::after {
 }
 
 .team-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    justify-items: center;
     gap: 2rem;
     max-width: 1200px;
     margin: 0 auto;
@@ -893,9 +931,8 @@ body::after {
     will-change: transform, opacity;
     position: relative;
     transition: transform 0.2s ease;
-    flex: 1 1 160px;
+    width: 100%;
     max-width: 180px;
-    min-width: 120px;
 }
 
 .team-member:hover {
@@ -1201,10 +1238,10 @@ body::after {
 
 @media screen and (max-width: 1024px) {
     .team-grid {
+        grid-template-columns: repeat(6, 1fr);
         gap: 1.5rem;
     }
     .team-member {
-        flex: 1 1 140px;
         max-width: 160px;
     }
     .team-avatar {
@@ -1213,12 +1250,19 @@ body::after {
     }
 }
 
+@media screen and (max-width: 768px) {
+    .team-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+}
+
 @media screen and (max-width: 480px) {
     .team-grid {
+        grid-template-columns: repeat(3, 1fr);
         gap: 1rem;
     }
     .team-member {
-        flex: 1 1 100%;
         max-width: 100%;
     }
     .team-avatar {
