@@ -11,12 +11,17 @@ function hideLoader() {
             // Affiche le modal après le chargement et l'animation principale
             setTimeout(() => {
                 showWelcomeModal();
-            }, 400); // petit délai pour la transition
+            }, 400);
         }
     });
 }
 
-gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Flip);
+
+const TEAM_FLIP_DURATION = 0.5;
+const TEAM_CLOSE_DURATION = 0.36;
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+let activeTeamInfo = null;
 
 function createParticles() {
     const container = document.querySelector('.floating-particles');
@@ -28,7 +33,6 @@ function createParticles() {
         const particle = document.createElement('div');
         particle.className = 'particle';
 
-        // Taille aléatoire (petit pour effet étoile)
         const size = Math.random() < 0.7
             ? Math.random() * 1.5 + 1.2 // petites étoiles
             : Math.random() * 4 + 2;    // quelques plus grosses
@@ -44,7 +48,7 @@ function createParticles() {
         const delay = Math.random() * 3;
         particle.style.animation = `particle-float ${duration}s linear ${delay}s infinite`;
         
-        // Opacité et blur aléatoire (pour effet étoile)
+        // Opacité et blur aléatoire
         const op = Math.random() * 0.3 + 0.18;
         particle.style.opacity = op.toFixed(2);
         particle.style.filter = `blur(${Math.random() * 1.2 + 0.2}px)`;
@@ -189,30 +193,11 @@ function initTeamAnimations() {
 
     teamMembers.forEach(member => {
         member.addEventListener('click', () => {
-            const info = createTeamInfo(member);
-            
-            const tl = gsap.timeline();
-            
-            tl.to(teamMembers, {
-                opacity: 0.3,
-                scale: 0.95,
-                duration: 0.3,
-                ease: 'power2.inOut',
-                filter: 'blur(2px)'
-            })
-            .to(member, {
-                opacity: 1,
-                scale: 1.1,
-                filter: 'blur(0px)',
-                duration: 0.3,
-                ease: 'power2.inOut'
-            }, '<')
-            .to(info, {
-                opacity: 1,
-                scale: 1,
-                duration: 0.4,
-                ease: 'back.out(1.7)'
-            });
+            if (activeTeamInfo) {
+                return;
+            }
+
+            createTeamInfo(member);
         });
     });
 }
@@ -484,6 +469,413 @@ function closeTeamInfo(btn) {
                 filter: 'blur(0px)',
                 duration: 0.2
             });
+        }
+    });
+}
+
+function setTeamMembersFocus(activeMember) {
+    const otherMembers = gsap.utils.toArray('.team-member').filter(member => member !== activeMember);
+
+    if (otherMembers.length > 0) {
+        gsap.to(otherMembers, {
+            opacity: 0.3,
+            scale: 0.95,
+            filter: 'blur(2px)',
+            duration: prefersReducedMotion.matches ? 0 : 0.25,
+            ease: 'power2.inOut',
+            overwrite: 'auto'
+        });
+    }
+
+    gsap.to(activeMember, {
+        opacity: 1,
+        scale: 1,
+        filter: 'blur(0px)',
+        duration: prefersReducedMotion.matches ? 0 : 0.25,
+        ease: 'power2.inOut',
+        overwrite: 'auto'
+    });
+}
+
+function resetTeamMembersFocus(immediate = false) {
+    const vars = {
+        opacity: 1,
+        scale: 1,
+        filter: 'blur(0px)',
+        overwrite: 'auto'
+    };
+
+    if (immediate || prefersReducedMotion.matches) {
+        gsap.set('.team-member', vars);
+        return;
+    }
+
+    gsap.to('.team-member', {
+        ...vars,
+        duration: 0.25,
+        ease: 'power2.inOut'
+    });
+}
+
+function createFloatingAvatar(avatar, rect) {
+    const floatingAvatar = avatar.cloneNode(true);
+    floatingAvatar.classList.remove('team-avatar-hidden');
+    floatingAvatar.classList.add('team-avatar-floating');
+    floatingAvatar.removeAttribute('style');
+
+    gsap.set(floatingAvatar, {
+        position: 'fixed',
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+        margin: 0,
+        x: 0,
+        y: 0
+    });
+
+    document.body.appendChild(floatingAvatar);
+    return floatingAvatar;
+}
+
+function normalizeAvatarLayout(avatar) {
+    if (!avatar) {
+        return;
+    }
+
+    avatar.removeAttribute('style');
+    gsap.set(avatar, { clearProps: 'all' });
+}
+
+function activateAvatarContour(avatar) {
+    if (!avatar) {
+        return;
+    }
+
+    if (prefersReducedMotion.matches) {
+        avatar.classList.add('team-avatar-modal-active');
+        return;
+    }
+
+    requestAnimationFrame(() => {
+        void avatar.offsetWidth;
+        avatar.classList.add('team-avatar-modal-active');
+    });
+}
+
+function stopTeamInfoAnimations(teamInfo) {
+    if (!teamInfo) {
+        return;
+    }
+
+    teamInfo.openTimeline?.kill();
+    teamInfo.closeTimeline?.kill();
+    teamInfo.flipAnimation?.kill();
+    teamInfo.closeAvatarTween?.kill();
+
+    gsap.killTweensOf(teamInfo.backdrop);
+    gsap.killTweensOf(teamInfo.panel);
+    gsap.killTweensOf(teamInfo.avatar);
+
+    if (teamInfo.socialLinks?.length) {
+        gsap.killTweensOf(teamInfo.socialLinks);
+    }
+
+    teamInfo.floatingAvatar?.remove();
+    teamInfo.avatar?.classList.remove('team-avatar-hidden');
+    teamInfo.avatar?.classList.remove('team-avatar-modal-active');
+    document.body.classList.remove('team-closing');
+}
+
+function cleanupTeamInfo(teamInfo) {
+    if (!teamInfo || teamInfo.cleanedUp) {
+        return;
+    }
+
+    teamInfo.cleanedUp = true;
+    stopTeamInfoAnimations(teamInfo);
+    document.removeEventListener('keydown', teamInfo.escHandler);
+
+    teamInfo.member.classList.remove('team-member-active');
+    teamInfo.avatar.classList.remove('team-avatar-modal');
+    teamInfo.avatar.classList.remove('team-avatar-modal-active');
+    teamInfo.avatar.classList.remove('team-avatar-hidden');
+    normalizeAvatarLayout(teamInfo.avatar);
+    teamInfo.placeholder?.remove();
+    teamInfo.container?.remove();
+    teamInfo.backdrop?.remove();
+    document.body.classList.remove('team-closing');
+
+    resetTeamMembersFocus();
+
+    if (activeTeamInfo === teamInfo) {
+        activeTeamInfo = null;
+    }
+}
+
+function createTeamInfo(member) {
+    document.querySelectorAll('.team-info-container, .team-info-backdrop').forEach(el => el.remove());
+
+    const avatar = member.querySelector('.team-avatar');
+    if (!avatar) {
+        return null;
+    }
+
+    const teamInfoBackdrop = document.createElement('div');
+    teamInfoBackdrop.classList.add('team-info-backdrop');
+    document.body.appendChild(teamInfoBackdrop);
+
+    const teamInfoContainer = document.createElement('div');
+    teamInfoContainer.classList.add('team-info-container');
+    document.body.appendChild(teamInfoContainer);
+
+    let socialsHtml = '';
+    try {
+        const socials = JSON.parse(member.getAttribute('data-socials') || '{}');
+        if (Object.keys(socials).length > 0) {
+            socialsHtml = `
+                <div class="team-info-socials">
+                    ${socials.instagram ? `
+                        <a href="${socials.instagram}" target="_blank" class="social-link">
+                            <img src="images/social/instagram.webp" alt="Instagram">
+                            Instagram
+                        </a>
+                    ` : ''}
+                    ${socials.bluesky ? `
+                        <a href="${socials.bluesky}" target="_blank" class="social-link">
+                            <img src="images/social/bluesky.png" alt="Bluesky">
+                            Bluesky
+                        </a>
+                    ` : ''}
+                    ${socials.github ? `
+                        <a href="${socials.github}" target="_blank" class="social-link">
+                            <img src="images/social/github.png" alt="GitHub">
+                            GitHub
+                        </a>
+                    ` : ''}
+                    ${socials.youtube ? `
+                        <a href="${socials.youtube}" target="_blank" class="social-link">
+                            <img src="images/social/youtube.webp" alt="YouTube">
+                            YouTube
+                        </a>
+                    ` : ''}
+                    ${socials.gamebanana ? `
+                        <a href="${socials.gamebanana}" target="_blank" class="social-link">
+                            <img src="images/social/gamebanana.png" alt="GameBanana">
+                            GameBanana
+                        </a>
+                    ` : ''}
+                </div>
+            `;
+        }
+    } catch (e) {
+        console.error('Error parsing social links:', e);
+    }
+
+    teamInfoContainer.innerHTML = `
+        <div class="team-info-panel">
+            <button class="team-info-close" aria-label="Fermer" title="Fermer">Ã—</button>
+            <div class="team-info">
+                <div class="team-info-body">
+                    <h3>${member.getAttribute('data-name')}</h3>
+                    <p><strong>${member.getAttribute('data-role')}</strong></p>
+                    ${socialsHtml}
+                    <p>${member.getAttribute('data-description')}</p>
+                    <button class="close-btn" onclick="closeTeamInfo(this)">Close</button>
+                </div>
+            </div>
+        </div>
+        <div class="team-info-avatar-anchor" aria-hidden="true"></div>
+    `;
+
+    const teamInfoPanel = teamInfoContainer.querySelector('.team-info-panel');
+    const avatarAnchor = teamInfoContainer.querySelector('.team-info-avatar-anchor');
+    const socialLinks = teamInfoContainer.querySelectorAll('.social-link');
+    const placeholder = document.createElement('span');
+    placeholder.classList.add('team-avatar-placeholder');
+    placeholder.setAttribute('aria-hidden', 'true');
+
+    teamInfoBackdrop.classList.add('visible');
+    teamInfoContainer.classList.add('visible');
+
+    gsap.set(teamInfoBackdrop, { opacity: 0 });
+    gsap.set(teamInfoPanel, { opacity: 0, y: 22, scale: 0.97 });
+    gsap.set(socialLinks, {
+        opacity: 0,
+        x: -10,
+        scale: 0.96
+    });
+
+    const avatarState = prefersReducedMotion.matches ? null : Flip.getState(avatar);
+
+    member.classList.add('team-member-active');
+    member.replaceChild(placeholder, avatar);
+    avatar.classList.add('team-avatar-modal');
+    avatarAnchor.appendChild(avatar);
+
+    const escHandler = (e) => {
+        if (e.key === 'Escape') {
+            closeTeamInfo();
+        }
+    };
+
+    activeTeamInfo = {
+        member,
+        avatar,
+        placeholder,
+        backdrop: teamInfoBackdrop,
+        container: teamInfoContainer,
+        panel: teamInfoPanel,
+        socialLinks,
+        escHandler,
+        cleanedUp: false
+    };
+
+    socialLinks.forEach((link, index) => {
+        gsap.to(link, {
+            opacity: 1,
+            x: 0,
+            scale: 1,
+            duration: prefersReducedMotion.matches ? 0 : 0.18,
+            delay: prefersReducedMotion.matches ? 0 : 0.16 + (index * 0.04),
+            ease: 'power2.out'
+        });
+
+        link.addEventListener('mouseenter', () => {
+            gsap.to(link, {
+                scale: 1.05,
+                y: -3,
+                duration: 0.15,
+                ease: 'power2.out'
+            });
+        });
+
+        link.addEventListener('mouseleave', () => {
+            gsap.to(link, {
+                scale: 1,
+                y: 0,
+                duration: 0.15,
+                ease: 'power2.out'
+            });
+        });
+    });
+
+    setTeamMembersFocus(member);
+
+    activateAvatarContour(avatar);
+
+    if (prefersReducedMotion.matches) {
+        gsap.set(teamInfoBackdrop, { opacity: 1 });
+        gsap.set(teamInfoPanel, { opacity: 1, y: 0, scale: 1 });
+    } else {
+        const openTimeline = gsap.timeline();
+
+        openTimeline.to(teamInfoBackdrop, {
+            opacity: 1,
+            duration: 0.22,
+            ease: 'power2.out'
+        }, 0);
+
+        openTimeline.to(teamInfoPanel, {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.32,
+            ease: 'power2.out'
+        }, 0.04);
+
+        const flipAnimation = Flip.from(avatarState, {
+            duration: TEAM_FLIP_DURATION,
+            ease: 'power2.inOut',
+            absolute: true,
+            nested: true,
+            scale: true,
+            simple: true
+        });
+
+        activeTeamInfo.openTimeline = openTimeline;
+        activeTeamInfo.flipAnimation = flipAnimation;
+    }
+
+    teamInfoBackdrop.addEventListener('click', () => closeTeamInfo());
+
+    const cornerClose = teamInfoContainer.querySelector('.team-info-close');
+    if (cornerClose) {
+        cornerClose.innerHTML = '&times;';
+        cornerClose.addEventListener('click', () => closeTeamInfo());
+    }
+
+    document.addEventListener('keydown', escHandler);
+
+    return teamInfoContainer;
+}
+
+function closeTeamInfo(btn) {
+    const teamInfo = activeTeamInfo;
+    if (!teamInfo || teamInfo.cleanedUp) {
+        return;
+    }
+
+    stopTeamInfoAnimations(teamInfo);
+    const startRect = teamInfo.avatar.getBoundingClientRect();
+    normalizeAvatarLayout(teamInfo.avatar);
+
+    if (teamInfo.placeholder?.parentNode) {
+        teamInfo.placeholder.parentNode.replaceChild(teamInfo.avatar, teamInfo.placeholder);
+    } else {
+        teamInfo.member.appendChild(teamInfo.avatar);
+    }
+
+    document.body.classList.add('team-closing');
+    teamInfo.avatar.classList.remove('team-avatar-modal');
+    resetTeamMembersFocus(true);
+    normalizeAvatarLayout(teamInfo.avatar);
+    void teamInfo.member.offsetWidth;
+
+    if (prefersReducedMotion.matches) {
+        cleanupTeamInfo(teamInfo);
+        return;
+    }
+
+    const targetRect = teamInfo.avatar.getBoundingClientRect();
+
+    if (!targetRect) {
+        cleanupTeamInfo(teamInfo);
+        return;
+    }
+
+    teamInfo.avatar.classList.add('team-avatar-hidden');
+    teamInfo.floatingAvatar = createFloatingAvatar(teamInfo.avatar, startRect);
+
+    teamInfo.closeTimeline = gsap.timeline({
+        defaults: { ease: 'power2.inOut' }
+    });
+
+    teamInfo.closeTimeline.to(teamInfo.panel, {
+        opacity: 0,
+        y: 20,
+        scale: 0.97,
+        duration: 0.22
+    }, 0);
+
+    teamInfo.closeTimeline.to(teamInfo.backdrop, {
+        opacity: 0,
+        duration: 0.2
+    }, 0.02);
+
+    teamInfo.closeAvatarTween = gsap.to(teamInfo.floatingAvatar, {
+        x: targetRect.left - startRect.left,
+        y: targetRect.top - startRect.top,
+        width: targetRect.width,
+        height: targetRect.height,
+        duration: TEAM_CLOSE_DURATION,
+        ease: 'power2.inOut',
+        onComplete: () => {
+            teamInfo.avatar.classList.remove('team-avatar-hidden');
+            normalizeAvatarLayout(teamInfo.avatar);
+            teamInfo.floatingAvatar?.remove();
+            teamInfo.floatingAvatar = null;
+            cleanupTeamInfo(teamInfo);
         }
     });
 }

@@ -663,7 +663,7 @@ body::after {
     border-radius: 50%;
     position: fixed;
     pointer-events: none;
-    z-index: 9999;
+    z-index: 11000;
     will-change: transform;
     transform: translate(-50%, -50%);
   }
@@ -679,7 +679,7 @@ body::after {
     background-size: contain;
     opacity: 0;
     transition: opacity 0.3s ease, transform 0.3s ease;
-    z-index: 9999;
+    z-index: 11000;
   }
 
   @keyframes arrow-animation {
@@ -822,7 +822,7 @@ body::after {
 
     .cursor-dot {
         display: none;
-        z-index: 9999;
+        z-index: 11000;
     }
 
     .topbar {
@@ -999,19 +999,9 @@ body::after {
     left: 50%;
     transform: translate(-50%, -50%);
     width: min(92vw, 600px);
-    max-height: 85vh;               /* limite haute */
-    padding: 3rem 2rem 2rem;
-    z-index: 9998;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: all 0.3s ease;
-    opacity: 0;
-    background: rgba(0, 0, 0, 0.95);
-    border-radius: 10px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-    pointer-events: auto !important;
-    overflow: hidden;               /* le contenu reste dans la carte */
+    max-height: 85vh;
+    z-index: 9999;
+    pointer-events: none;
 }
 
 /* Close icon in top-right corner */
@@ -1036,11 +1026,96 @@ body::after {
 .team-info-close:active { transform: scale(0.98); }
 
 .team-info-container.visible {
+    display: block;
+}
+
+.team-info-panel {
+    position: relative;
+    width: 100%;
+    max-height: 85vh;
+    padding: 3rem 2rem 2rem;
     display: flex;
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-    pointer-events: auto;
-    z-index: 9998;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.95);
+    border-radius: 10px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    pointer-events: auto !important;
+    overflow: hidden;
+}
+
+.team-info-avatar-anchor {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    width: 120px;
+    height: 120px;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.team-avatar-placeholder {
+    display: block;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    visibility: hidden;
+}
+
+.team-member.team-member-active {
+    z-index: 10000;
+}
+
+.team-member.team-member-active::after {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.team-avatar.team-avatar-modal {
+    width: 120px;
+    height: 120px;
+    display: block;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 2;
+    box-shadow:
+        0 0 0 3px rgba(157, 78, 221, 0),
+        0 4px 20px rgba(157, 78, 221, 0);
+    transition: none;
+}
+
+.team-avatar.team-avatar-modal.team-avatar-modal-active {
+    animation: teamAvatarContourFade 0.28s ease forwards;
+}
+
+@keyframes teamAvatarContourFade {
+    from {
+        box-shadow:
+            0 0 0 3px rgba(157, 78, 221, 0),
+            0 4px 20px rgba(157, 78, 221, 0);
+    }
+    to {
+        box-shadow:
+            0 0 0 3px var(--primary),
+            0 4px 20px rgba(157, 78, 221, 0.3);
+    }
+}
+
+.team-avatar.team-avatar-hidden {
+    visibility: hidden;
+}
+
+.team-avatar.team-avatar-floating {
+    pointer-events: none;
+    z-index: 10002;
+    will-change: transform, width, height;
+    transition: none !important;
+}
+
+.team-closing .team-member,
+.team-closing .team-avatar {
+    transition: none !important;
 }
 
 .team-info {
