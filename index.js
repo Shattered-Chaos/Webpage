@@ -131,9 +131,8 @@ function initMainAnimations() {
             if (motto) {
                 typewriterLoop(motto, [
                     'Nothing is "too ambitious"',
-                    'Small team of 9 silly French guys',
-                    'We make projects, with videos games',
-                    '#FuckTomtombook'
+                    'Small team of 6 silly French guys',
+                    'We make projects, with videos games'
                 ]);
             }
         }
