@@ -8,7 +8,6 @@ function hideLoader() {
         onComplete: () => {
             loader.remove();
             initMainAnimations();
-            // Affiche le modal après le chargement et l'animation principale
             setTimeout(() => {
                 showWelcomeModal();
             }, 400);
@@ -34,21 +33,18 @@ function createParticles() {
         particle.className = 'particle';
 
         const size = Math.random() < 0.7
-            ? Math.random() * 1.5 + 1.2 // petites étoiles
-            : Math.random() * 4 + 2;    // quelques plus grosses
+            ? Math.random() * 1.5 + 1.2
+            : Math.random() * 4 + 2;
         particle.style.width = `${size}px`;
         particle.style.height = `${size}px`;
         
-        // Position aléatoire
         particle.style.left = `${Math.random() * 100}%`;
         particle.style.top = `${Math.random() * 100}%`;
         
-        // Animation aléatoire
         const duration = Math.random() * 3 + 4.5;
         const delay = Math.random() * 3;
         particle.style.animation = `particle-float ${duration}s linear ${delay}s infinite`;
         
-        // Opacité et blur aléatoire
         const op = Math.random() * 0.3 + 0.18;
         particle.style.opacity = op.toFixed(2);
         particle.style.filter = `blur(${Math.random() * 1.2 + 0.2}px)`;
@@ -126,7 +122,6 @@ function initMainAnimations() {
         opacity: 1,
         duration: 0.8,
         onComplete: () => {
-            // Animation texte typewriter
             const motto = document.querySelector('.motto');
             if (motto) {
                 typewriterLoop(motto, [
