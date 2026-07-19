@@ -1186,12 +1186,14 @@ body::after {
 
 .team-info-socials {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
     gap: 0.5rem;
     justify-content: center;
     margin: 1rem 0;
     width: 100%;
     padding: 0 1rem;
+    overflow-wrap: normal;
+    word-break: normal;
 }
 
 .team-info-socials a {
@@ -1208,6 +1210,9 @@ body::after {
     min-width: 120px;
     justify-content: center;
     will-change: transform;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    word-break: normal;
 }
 
 
