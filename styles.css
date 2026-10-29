@@ -79,12 +79,8 @@ body::after {
     border-radius: 25px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     opacity: 0;
-    visibility: visible;
-    transform: translateX(-50%);
     will-change: transform, opacity;
 }
-
-
 
 .logo-container {
     position: static;
@@ -96,13 +92,6 @@ body::after {
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-.logo-container.hidden {
-    opacity: 0;
-    visibility: hidden;
-}
-
-
-
 .logo {
     height: 100%;
     width: auto;
@@ -111,16 +100,6 @@ body::after {
 .logo-container:hover .logo {
     transition: transform 0.3s ease;
     transform: scale(1.1);
-}
-
-@keyframes logoFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-3px); }
-}
-
-@keyframes logoSpin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
 }
 
 .nav-links {
@@ -148,25 +127,22 @@ body::after {
     justify-content: center;
     cursor: pointer;
     position: relative;
-    gap: 6px; /* espace entre les barres */
+    gap: 6px;
 }
 .menu-toggle .bar {
     display: block;
-    width: 2px;          /* barre verticale */
+    width: 2px;
     height: 18px;
     background: #fff;
     border-radius: 2px;
     transition: transform 0.25s ease, opacity 0.25s ease, width 0.25s ease, height 0.25s ease;
 }
-/* l'espacement est géré par gap, pas besoin de margin-top */
-
-/* Transform to X when open */
-/* En mode ouvert, on centre les barres et on forme un X */
+/* Open: stack the bars in the center and turn them into an X */
 .topbar.nav-open .menu-toggle[aria-expanded="true"] .bar {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 24px;  /* devient une barre horizontale */
+    width: 24px;
     height: 2px;
     transform-origin: center;
 }
@@ -216,14 +192,13 @@ body::after {
     position: relative;
     overflow: hidden;
     background: transparent;
-    /* Ajoute un fond plus visible pour le hero */
 }
 
 .hero::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(16,0,43,0.45); /* moins opaque qu'avant */
+    background: rgba(16,0,43,0.45);
     z-index: 0;
     pointer-events: none;
 }
@@ -236,7 +211,7 @@ body::after {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2.5rem; /* espace entre logo et texte */
+    gap: 2.5rem;
 }
 
 .hero-content::after {
@@ -253,7 +228,7 @@ body::after {
 }
 
 .hero-logo {
-    max-width: 600px;
+    max-width: 80%;
     width: 90%;
     height: auto;
     opacity: 0;
@@ -262,25 +237,6 @@ body::after {
     filter: drop-shadow(0 0 20px rgba(157, 78, 221, 0.4));
     display: block;
     margin: 0 auto;
-}
-
-.hero-logo.visible {
-    animation: heroFloat 4s ease-in-out infinite;
-    opacity: 1;
-    transform: translateY(0);
-    transition: opacity 1s ease, transform 1s ease;
-}
-
-@keyframes heroFloat {
-    0%, 100% {
-        transform: translateY(0) rotate(0deg);
-    }
-    25% {
-        transform: translateY(-15px) rotate(2deg);
-    }
-    75% {
-        transform: translateY(15px) rotate(-2deg);
-    }
 }
 
 @keyframes shadowPulse {
@@ -426,17 +382,16 @@ body::after {
 
 .projects-grid + .projects-grid {
     margin-top: 2.5rem;
-    /* Ajoute un espace entre les lignes de projets */
 }
 
 .project-card {
+    width: 100%;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 15px;
     overflow: hidden;
     opacity: 0;
     transform: translateY(50px);
     will-change: transform, opacity;
-    visibility: visible !important;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -471,7 +426,7 @@ body::after {
 }
 
 .project-card:hover .project-info {
-    transform: translateY(-8px);
+    transform: translateY(-5px);
 }
 
 .project-info h3 {
@@ -547,33 +502,6 @@ body::after {
     margin-left: -8px;
 }
 
-.reveal-card {
-    opacity: 0;
-    transform: translateY(50px);
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.reveal-card.active {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.reveal-card.active .creator-badge {
-    transform: translateY(0);
-    opacity: 1;
-    transition-delay: 0.3s;
-}
-
-.project-card.active,
-.creator-badge.active {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.project-card:hover .project-info {
-    transform: translateY(-5px);
-}
-
 .creator-credit {
     display: flex;
     align-items: center;
@@ -612,11 +540,8 @@ body::after {
     text-decoration: underline;
 }
 
-
-
 .motto {
-    margin-top: 2rem;
-    font-size: 1.5rem;
+    font-size: 18px;
     opacity: 0;
     visibility: hidden;
     letter-spacing: 2px;
@@ -626,9 +551,7 @@ body::after {
     -webkit-text-fill-color: transparent;
     text-shadow: 0 0 20px rgba(157, 78, 221, 0.2);
     position: relative;
-    display: inline-block;
-    display: block; /* pour forcer le texte à passer à la ligne sous le logo */
-    margin-top: 0;
+    display: block;
 }
 
 .motto::after {
@@ -648,14 +571,6 @@ body::after {
     50% { opacity: 0; }
 }
 
-.motto.visible {
-    opacity: 1;
-    transition: all 0.8s ease;
-    transition-delay: 1s;
-}
-
-
-
 .cursor-dot {
     width: 30px;
     height: 30px;
@@ -666,45 +581,7 @@ body::after {
     z-index: 11000;
     will-change: transform;
     transform: translate(-50%, -50%);
-  }
-
-  .cursor-arrow {
-    width: 20px;
-    height: 20px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(0deg);
-    background: url('arrow.svg') no-repeat center center;
-    background-size: contain;
-    opacity: 0;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    z-index: 11000;
-  }
-
-  @keyframes arrow-animation {
-    0% {
-      transform: translate(-50%, -50%) rotate(0deg);
-    }
-    25% {
-      transform: translate(-50%, -50%) rotate(45deg);
-    }
-    50% {
-      transform: translate(-50%, -50%) rotate(90deg);
-    }
-    75% {
-      transform: translate(-50%, -50%) rotate(135deg);
-    }
-    100% {
-      transform: translate(-50%, -50%) rotate(180deg);
-    }
-  }
-
-  /* Apply animation to the arrow */
-  .cursor-arrow.visible {
-    opacity: 1;
-    animation: arrow-animation 1s infinite;
-  }
+}
 
 @media screen and (max-width: 768px) {
     .menu-toggle { display: inline-flex; }
@@ -712,7 +589,6 @@ body::after {
         height: calc(var(--nav-height) - 25px);
     }
 
-    /* Dropdown panel for nav links */
     .nav-links {
         position: absolute;
         top: calc(100% + 8px);
@@ -731,21 +607,13 @@ body::after {
         padding: 0.5rem;
         max-height: 0;
         overflow: hidden;
-        opacity: 0 !important; /* override GSAP inline */
+        opacity: 0 !important; /* beats the inline opacity GSAP sets on load */
         visibility: hidden !important;
         transform: translateY(-8px);
         transition: max-height 0.3s ease, opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
         z-index: 999;
     }
 
-    .topbar {
-        justify-content: space-between;
-        padding: 0 1rem;
-        height: 50px;
-        width: 95%;
-    }
-
-    /* Show dropdown when toggled */
     .topbar.nav-open .nav-links {
         max-height: 320px;
         opacity: 1 !important;
@@ -763,13 +631,7 @@ body::after {
         padding: 0.3rem 0.8rem !important;
     }
 
-    .hero-logo {
-        max-width: 300px;
-        width: 90%;
-    }
-
     .motto {
-        font-size: 1.2rem;
         padding: 0 var(--mobile-padding);
     }
 
@@ -822,7 +684,6 @@ body::after {
 
     .cursor-dot {
         display: none;
-        z-index: 11000;
     }
 
     .topbar {
@@ -882,8 +743,6 @@ body::after {
         line-height: 1.5;
     }
 }
-
-
 
 .who-are-we {
     padding: 4rem 2rem;
@@ -1124,16 +983,16 @@ body::after {
     text-align: center;
     pointer-events: auto !important;
     position: relative;
-    padding-top: 140px;             /* laisse de la place à l'avatar (120px + marges) */
-    padding-bottom: 1rem;           /* normal flow */
-    max-height: calc(85vh - 5rem);  /* laisse la place aux paddings/av. */
-    overflow-y: auto;               /* la zone de contenu scrolle dans la carte */
+    padding-top: 140px; /* room for the 120px avatar */
+    padding-bottom: 1rem;
+    max-height: calc(85vh - 5rem);
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
 
 .team-info-body {
     max-height: calc(85vh - 6rem);
-    overflow-y: auto;                /* zone scrollable réelle */
+    overflow-y: auto;
     padding: 0 0.5rem 0.5rem;
 }
 
@@ -1147,9 +1006,8 @@ body::after {
 }
 
 .team-info .close-btn {
-    background: var(--primary);
+    background: #8572ff;
     color: white;
-    background-color: #8572ff;
     padding: 0.8rem 2rem;
     border: none;
     border-radius: 5px;
@@ -1157,32 +1015,12 @@ body::after {
     margin-top: 1rem;
     cursor: pointer !important;
     pointer-events: auto !important;
-    position: static;               /* retour au flux normal */
-    z-index: 10003;
+    transition: background 0.3s ease;
 }
 
 .team-info .close-btn:hover {
-    background: var(--secondary);
-    background-color: #634bff;
-    transition: 0,3s;
+    background: #634bff;
 }
-
-.close-btn {
-    transition: all 0.3s ease;
-}
-
-.team-info-avatar {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    border: 3px solid var(--primary);
-    position: absolute;
-    top: 16px;                      /* avatar entièrement dans la carte */
-    left: 50%;
-    transform: translateX(-50%);
-    box-shadow: 0 4px 20px rgba(157, 78, 221, 0.3);
-}
-
 
 .team-info-socials {
     display: grid;
@@ -1215,82 +1053,11 @@ body::after {
     word-break: normal;
 }
 
-
-
 .team-info-socials img {
     width: 18px;
     height: 18px;
     opacity: 0.8;
 }
-
-.welcome-modal-backdrop {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    background: rgba(0,0,0,0.7);
-    z-index: 10000;
-    opacity: 0;
-    transition: opacity 0.3s;
-    display: none;
-}
-.welcome-modal-backdrop.visible {
-    opacity: 1;
-    display: block;
-}
-
-.welcome-modal {
-    position: fixed;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%) scale(0.95);
-    background: rgba(16,0,43,0.98);
-    color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    padding: 2.5rem 2rem 1.5rem;
-    z-index: 10001;
-    min-width: 320px;
-    max-width: 90vw;
-    text-align: center;
-    opacity: 0;
-    transition: opacity 0.3s, transform 0.3s;
-    display: none;
-}
-.welcome-modal.visible {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-    display: block;
-}
-.welcome-modal-close {
-    margin-top: 1.5rem;
-    padding: 0.7rem 2.2rem;
-    background: #9d4edd;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-.welcome-modal-close:hover {
-    background: #c77dff;
-}
-
-.hero-logo {
-        max-width: 80%;
-    }
-
-    .motto {
-        font-size: 18px;
-    }
-
-    .team-member, .project-card {
-        width: 100%;
-    }
-
-    .footer-logo-img {
-        max-width: 150px;
-        max-width: 150px;
-    }
 
 .scroll-arrow {
     position: absolute;
@@ -1393,7 +1160,6 @@ body::after {
     }
 }
 
-/* Éviter que de longues chaînes débordent horizontalement */
 .team-info, .team-info-body {
     word-break: break-word;
     overflow-wrap: anywhere;
