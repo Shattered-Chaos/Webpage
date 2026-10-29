@@ -127,28 +127,24 @@ body::after {
     justify-content: center;
     cursor: pointer;
     position: relative;
-    gap: 6px;
 }
+/* Bars stay absolutely centered and only transform animates, so opening never jumps */
 .menu-toggle .bar {
-    display: block;
-    width: 2px;
-    height: 18px;
-    background: #fff;
-    border-radius: 2px;
-    transition: transform 0.25s ease, opacity 0.25s ease, width 0.25s ease, height 0.25s ease;
-}
-/* Open: stack the bars in the center and turn them into an X */
-.topbar.nav-open .menu-toggle[aria-expanded="true"] .bar {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 24px;
-    height: 2px;
-    transform-origin: center;
+    width: 2px;
+    height: 20px;
+    margin: -10px 0 0 -1px;
+    background: #fff;
+    border-radius: 2px;
+    transition: transform 0.3s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.2s ease;
 }
-.topbar.nav-open .menu-toggle[aria-expanded="true"] .bar:nth-child(1) { transform: translate(-50%, -50%) rotate(45deg); }
-.topbar.nav-open .menu-toggle[aria-expanded="true"] .bar:nth-child(2) { opacity: 0; }
-.topbar.nav-open .menu-toggle[aria-expanded="true"] .bar:nth-child(3) { transform: translate(-50%, -50%) rotate(-45deg); }
+.menu-toggle .bar:nth-child(1) { transform: translateX(-8px); }
+.menu-toggle .bar:nth-child(3) { transform: translateX(8px); }
+.topbar.nav-open .menu-toggle .bar:nth-child(1) { transform: rotate(45deg); }
+.topbar.nav-open .menu-toggle .bar:nth-child(2) { opacity: 0; transform: scaleY(0); }
+.topbar.nav-open .menu-toggle .bar:nth-child(3) { transform: rotate(-45deg); }
 
 .nav-links a {
     color: white;
