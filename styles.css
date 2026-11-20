@@ -4,7 +4,7 @@
     --dark: #10002b;
     --nav-height: 50px; 
     --nav-padding: 1rem;
-    --nav-width: 800px; 
+    --nav-width: 900px;
     --overlay-opacity: 0.75;
     --mobile-padding: 1rem;
 }
@@ -84,7 +84,8 @@ body::after {
 
 .logo-container {
     position: static;
-    height: calc(var(--nav-height) - 20px); 
+    height: calc(var(--nav-height) - 20px);
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     opacity: 0;
@@ -153,6 +154,7 @@ body::after {
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    white-space: nowrap;
     padding: 0.4rem 1rem;
     border-radius: 12px;
     transition: all 0.3s ease;
@@ -763,6 +765,18 @@ body::after {
     padding: 0 1rem;
 }
 
+.subsidiary-logo {
+    width: min(100%, 500px);
+    height: auto;
+    filter: brightness(0.4);
+    transition: filter 0.3s ease;
+}
+
+.subsidiary-logo:hover,
+a:focus-visible .subsidiary-logo {
+    filter: brightness(1);
+}
+
 .team {
     padding: 4rem 2rem;
     background: rgba(157, 78, 221, 0.05);
@@ -1077,6 +1091,16 @@ body::after {
     width: 36px;
     height: 36px;
     filter: drop-shadow(0 2px 8px rgba(157, 78, 221, 0.25));
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .nav-links {
+        gap: 0.3rem;
+    }
+    .nav-links a {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.6rem;
+    }
 }
 
 @media screen and (max-width: 1024px) {
